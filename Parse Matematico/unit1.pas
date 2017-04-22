@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, RTTICtrls, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ComCtrls;
+  StdCtrls, ComCtrls, tree,ParseR;
 
 type
 
@@ -20,6 +20,7 @@ type
     ParceMatematico: TLabel;
     Memo1: TMemo;
     function FLexel(x:String):String;
+    procedure FormCreate(Sender: TObject);
     function FParser(x:String):String;
     function FInterpreter(x:String):String;
     procedure EditOperacionChange(Sender: TObject);
@@ -28,6 +29,8 @@ type
   private
     { private declarations }
   public
+    Arbol :TPTree;
+    SParser : TParseR;
     { public declarations }
   end;
 
@@ -48,6 +51,13 @@ function TForm1.FLexel(x:String):String;
 begin
   FLexel:=x;
 end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+     Arbol:= TPTree.Create();
+     SParser:= TParseR.Create;
+end;
+
 function TForm1.FParser(x:String):String;
 begin
   FParser:=x;
@@ -71,7 +81,9 @@ begin
   {interpreter := Interpreter(parser);
   result := interpreter.interpret();}
   result :=FInterpreter(parser); {DAR SOLUCION A LO INTERPRETADO Y JERARQUIZADO}
-  Memo1.Lines.Add(result);
+  SParser.Expression:=EditOperacion.Text;
+  //Memo1.Lines.Add(result);
+  Memo1.Lines.Add(FloatToStr(SParser.Evaluate()));
 end;
 
 procedure TForm1.Memo1Change(Sender: TObject);

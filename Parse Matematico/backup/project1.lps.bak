@@ -20,7 +20,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
         <TopLine Value="73"/>
-        <CursorPos X="29" Y="85"/>
+        <CursorPos X="32" Y="94"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -38,8 +38,8 @@
         <UnitName Value="ParseR"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="98"/>
-        <CursorPos X="40" Y="93"/>
+        <TopLine Value="55"/>
+        <CursorPos X="26" Y="62"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit3>

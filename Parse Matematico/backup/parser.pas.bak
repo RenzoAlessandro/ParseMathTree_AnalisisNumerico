@@ -5,7 +5,7 @@ unit ParseR;
 interface
 
 uses
-  Classes, SysUtils, gstack, math, Dialogs;
+  Classes, SysUtils, gstack, math;
 
 type
   TParseR = Class
@@ -52,9 +52,15 @@ begin
           else
             OperandStack.push(StrToFloat(sNumber));
        end;
-    ShowMessage(Expression[i]);
+
     if Expression[i] = '*' then
        OperatorsStack.push('*');
+    if Expression[i] = 'l' then
+       OperatorsStack.push('ln');
+    if Expression[i] = 's' then
+       OperatorsStack.push('sin');
+    if Expression[i] = 'c' then
+       OperatorsStack.push('cos');
     if Expression[i] = '+' then begin
       case OperatorsStack.top() of
           '*' : begin
@@ -134,6 +140,21 @@ begin
                OperandStack.pop();
                OperandStack.push(aux2/aux1);
                end;
+          'ln': begin
+                aux1:=OperandStack.top();
+                OperandStack.pop();
+                OperandStack.push(ln(aux1));
+                end;
+          'sin': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(sin(aux1));
+                 end;
+          'cos': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(cos(aux1));
+                 end;
         end;
       end;
     OperatorsStack.pop();

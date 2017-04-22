@@ -57,10 +57,12 @@ begin
        OperatorsStack.push('*');
     if Expression[i] = 'l' then
        OperatorsStack.push('ln');
-    if Expression[i] = 'sin' then
+    if Expression[i] = 's' then
        OperatorsStack.push('sin');
-    if Expression[i] = 'cos' then
+    if Expression[i] = 'c' then
        OperatorsStack.push('cos');
+    if Expression[i] = 'e' then
+       OperatorsStack.push('exp');
     if Expression[i] = '+' then begin
       case OperatorsStack.top() of
           '*' : begin
@@ -149,6 +151,16 @@ begin
                  aux1:=OperandStack.top();
                  OperandStack.pop();
                  OperandStack.push(sin(aux1));
+                 end;
+          'cos': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(cos(aux1));
+                 end;
+          'exp': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(exp(aux1));
                  end;
         end;
       end;

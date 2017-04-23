@@ -6,7 +6,6 @@ interface
 
 uses
   Classes, SysUtils, gstack, math;
-
 type
   TParseR = Class
   Private
@@ -41,10 +40,10 @@ begin
        OperatorsStack.push('(');
     if Expression[i] in NUM then
       begin
+      sNumber:='';
           while Expression[i] in NUM do
             begin
-              sNumber:='';
-              sNumber:= SNumber + Expression[i];
+              sNumber:=Concat(SNumber,Expression[i]);
               i:=i+1;
             end;
           if(OperatorsStack.Size()>0) and (String(OperatorsStack.Top()) = '-') then

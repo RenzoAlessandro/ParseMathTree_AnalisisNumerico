@@ -6,6 +6,8 @@ interface
 
 uses
   Classes, SysUtils, gstack, math;
+{Classes, SysUtils, FileUtil, RTTICtrls, Forms, Controls, Graphics, Dialogs,
+  StdCtrls, ComCtrls,gstack,math;}
 
 type
   TParseR = Class
@@ -41,10 +43,10 @@ begin
        OperatorsStack.push('(');
     if Expression[i] in NUM then
       begin
+      sNumber:='';
           while Expression[i] in NUM do
             begin
-              sNumber:='';
-              sNumber:= SNumber + Expression[i];
+              sNumber:=Concat(SNumber,Expression[i]);
               i:=i+1;
             end;
           if(OperatorsStack.Size()>0) and (String(OperatorsStack.Top()) = '-') then
@@ -61,6 +63,8 @@ begin
        OperatorsStack.push('sin');
     if Expression[i] = 'c' then
        OperatorsStack.push('cos');
+    if Expression[i] = 'e' then
+       OperatorsStack.push('exp');
     if Expression[i] = '+' then begin
       case OperatorsStack.top() of
           '*' : begin
@@ -154,6 +158,11 @@ begin
                  aux1:=OperandStack.top();
                  OperandStack.pop();
                  OperandStack.push(cos(aux1));
+                 end;
+          'exp': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(exp(aux1));
                  end;
         end;
       end;

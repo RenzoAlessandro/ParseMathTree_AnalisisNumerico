@@ -1,0 +1,179 @@
+unit ParseR;
+
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils, gstack, math;
+type
+  TParseR = Class
+  Private
+  Public
+    Expression: String;
+    function Evaluate():Double;
+    procedure SetExpression(NewExp:String);
+  end;
+
+implementation
+function TParseR.Evaluate(): Double;
+type
+  TCharStack = specialize TStack<String>;
+  TIntegerStack = specialize TStack<Extended>;
+const
+  NUM = ['0'..'9'];
+var
+  OperatorsStack: TCharStack;
+  OperandStack: TIntegerStack;
+  i: integer;
+  aux1,aux2: Extended;
+  sNumber: String;
+  AuxOperator: String;
+begin
+  OperatorsStack:= TCharStack.Create;
+  OperandStack:= TIntegerStack.Create;
+  Expression:='('+Expression+')';
+  i:=1;
+  while i <= Length(Expression) do
+  begin
+    if Expression[i] = '(' then
+       OperatorsStack.push('(');
+    if Expression[i] in NUM then
+      begin
+      sNumber:='';
+          while Expression[i] in NUM do
+            begin
+              sNumber:=Concat(SNumber,Expression[i]);
+              i:=i+1;
+            end;
+          if(OperatorsStack.Size()>0) and (String(OperatorsStack.Top()) = '-') then
+            OperandStack.push(-StrToFloat(sNumber))
+          else
+            OperandStack.push(StrToFloat(sNumber));
+       end;
+
+    if Expression[i] = '*' then
+       OperatorsStack.push('*');
+    if Expression[i] = 'l' then
+       OperatorsStack.push('ln');
+    if Expression[i] = 's' then
+       OperatorsStack.push('sin');
+    if Expression[i] = 'c' then
+       OperatorsStack.push('cos');
+    if Expression[i] = 'e' then
+       OperatorsStack.push('exp');
+    if Expression[i] = '+' then begin
+      case OperatorsStack.top() of
+          '*' : begin
+                  aux1:= OperandStack.top();
+                  OperandStack.pop();
+                  aux2:= OperandStack.top();
+                  OperandStack.pop();
+                  OperandStack.push(aux1*aux2);
+                  OperatorsStack.pop();
+                end;
+          '/' : begin
+                  aux1:=OperandStack.top();
+                  OperandStack.pop();
+                  aux2:=OperandStack.top();
+                  OperandStack.pop();
+                  OperandStack.push(aux2/aux1);
+                  OperatorsStack.pop();
+                end;
+      end;
+      OperatorsStack.push('+');
+    end;
+    if Expression[i] = '-' then begin
+      case OperatorsStack.top() of
+          '*' : begin
+                  aux1:= OperandStack.top();
+                  OperandStack.pop();
+                  aux2:= OperandStack.top();
+                  OperandStack.pop();
+                  OperandStack.push(aux1*aux2);
+                  OperatorsStack.pop();
+                end;
+          '/' : begin
+                  aux1:=OperandStack.top();
+                  OperandStack.pop();
+                  aux2:=OperandStack.top();
+                  OperandStack.pop();
+                  OperandStack.push(aux2/aux1);
+                  OperatorsStack.pop();
+                end;
+      end;
+      OperatorsStack.push('-');
+    end;
+    if Expression[i] = '/' then
+      OperatorsStack.push('/');
+    if Expression[i] = ')' then
+    begin
+      while OperatorsStack.top() <> '(' do
+      begin
+        AuxOperator := OperatorsStack.top();
+        OperatorsStack.pop();
+        case AuxOperator of
+          '+': begin
+               aux1:=OperandStack.top();
+               OperandStack.pop();
+               aux2:=OperandStack.top();
+               OperandStack.pop();
+               OperandStack.push(aux1+aux2);
+               end;
+          '-': begin
+               aux1:=OperandStack.top();
+               OperandStack.pop();
+               aux2:=OperandStack.top();
+               OperandStack.pop();
+               OperandStack.push(aux1+aux2);
+               end;
+          '*': begin
+               aux1:=OperandStack.top();
+               OperandStack.pop();
+               aux2:=OperandStack.top();
+               OperandStack.pop();
+               OperandStack.push(aux1*aux2);
+               end;
+          '/': begin
+               aux1:=OperandStack.top();
+               OperandStack.pop();
+               aux2:=OperandStack.top();
+               OperandStack.pop();
+               OperandStack.push(aux2/aux1);
+               end;
+          'ln': begin
+                aux1:=OperandStack.top();
+                OperandStack.pop();
+                OperandStack.push(ln(aux1));
+                end;
+          'sin': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(sin(aux1));
+                 end;
+          'cos': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(cos(aux1));
+                 end;
+          'exp': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(exp(aux1));
+                 end;
+        end;
+      end;
+    OperatorsStack.pop();
+    end;
+    i:=i+1;
+  end;
+  result:= OperandStack.top();
+end;
+
+
+procedure TParseR.SetExpression(NewExp:String);
+begin
+     self.Expression := NewExp;
+end;
+
+end.

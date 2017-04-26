@@ -21,6 +21,7 @@ type
     Memo1: TMemo;
     procedure FormCreate(Sender: TObject);
     procedure GoClick(Sender: TObject);
+    procedure ParceMatematicoClick(Sender: TObject);
   private
     { private declarations }
   public
@@ -49,5 +50,11 @@ begin
   SParser.Expression:=EditOperacion.Text;
   Memo1.Lines.Add(FloatToStr(SParser.Evaluate()));
 end;
+
+procedure TForm1.ParceMatematicoClick(Sender: TObject);
+begin
+
+end;
+
 end.
 

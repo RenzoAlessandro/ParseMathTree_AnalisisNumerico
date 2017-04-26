@@ -22,17 +22,18 @@ type
   TCharStack = specialize TStack<String>;
   TIntegerStack = specialize TStack<Extended>;
 const
-  NUM = ['0'..'9',','];
+  NUM = ['0'..'9','.'];
 var
   OperatorsStack: TCharStack;
   OperandStack: TIntegerStack;
   i,numberStart,numberEnd: integer;
-  aux1,aux2: Extended;
+  aux1,aux2,preaux: Extended;
   sNumber: String;
   AuxOperator: String;
 begin
   OperatorsStack:= TCharStack.Create;
   OperandStack:= TIntegerStack.Create;
+  Expression:=Expression.Replace('pi',FloatToStr(pi),[rfReplaceAll]);
   Expression:='('+Expression+')';
   i:=1;
   while i <= Length(Expression) do begin
@@ -69,13 +70,16 @@ begin
        OperatorsStack.push('cos');
        i:=i+2;
     end;
+    if Expression[i] = 't' then begin
+       OperatorsStack.push('tan');
+       i:=i+2;
+    end;
     if Expression[i] = 'e' then begin
        OperatorsStack.push('exp');
        i:=i+2;
     end;
     if Expression[i] = '^' then begin
        OperatorsStack.push('^');
-       i:=i+0;
     end;
     if Expression[i] = '+' then begin
       if OperatorsStack.IsEmpty() then begin
@@ -114,6 +118,12 @@ begin
                  aux1:=OperandStack.top();
                  OperandStack.pop();
                  OperandStack.push(cos(aux1));
+                 OperatorsStack.pop();
+                 end;
+          'tan': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(tan(aux1));
                  OperatorsStack.pop();
                  end;
           'exp': begin
@@ -172,6 +182,12 @@ begin
                  OperandStack.push(cos(aux1));
                  OperatorsStack.pop();
                  end;
+          'tan': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(tan(aux1));
+                 OperatorsStack.pop();
+                 end;
           'exp': begin
                  aux1:=OperandStack.top();
                  OperandStack.pop();
@@ -197,6 +213,8 @@ begin
       begin
         AuxOperator := OperatorsStack.top();
         OperatorsStack.pop();
+        preaux:= OperandStack.Top();
+        OperandStack.Pop();
         case AuxOperator of
           '+': begin
                case OperatorsStack.top() of
@@ -234,6 +252,12 @@ begin
                            OperandStack.push(cos(aux1));
                            OperatorsStack.pop();
                            end;
+                    'tan': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(tan(aux1));
+                           OperatorsStack.pop();
+                           end;
                     'exp': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
@@ -249,8 +273,8 @@ begin
                            OperatorsStack.pop();
                            end;
                end;
-               aux1:=OperandStack.top();
-               OperandStack.pop();
+               aux1:=preaux;//OperandStack.top();
+               //OperandStack.pop();
                aux2:=OperandStack.top();
                OperandStack.pop();
                OperandStack.push(aux1+aux2);
@@ -291,6 +315,12 @@ begin
                            OperandStack.push(cos(aux1));
                            OperatorsStack.pop();
                            end;
+                    'tan': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(tan(aux1));
+                           OperatorsStack.pop();
+                           end;
                     'exp': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
@@ -306,8 +336,8 @@ begin
                            OperatorsStack.pop();
                            end;
                end;
-               aux1:=OperandStack.top();
-               OperandStack.pop();
+               aux1:=preaux;//OperandStack.top();
+               //OperandStack.pop();
                aux2:=OperandStack.top();
                OperandStack.pop();
                OperandStack.push(aux2-aux1);
@@ -332,6 +362,12 @@ begin
                            OperandStack.push(cos(aux1));
                            OperatorsStack.pop();
                            end;
+                    'tan': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(tan(aux1));
+                           OperatorsStack.pop();
+                           end;
                     'exp': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
@@ -347,8 +383,8 @@ begin
                            OperatorsStack.pop();
                            end;
                end;
-               aux1:=OperandStack.top();
-               OperandStack.pop();
+               aux1:=preaux;//OperandStack.top();
+               //OperandStack.pop();
                aux2:=OperandStack.top();
                OperandStack.pop();
                OperandStack.push(aux1*aux2);
@@ -373,6 +409,12 @@ begin
                            OperandStack.push(cos(aux1));
                            OperatorsStack.pop();
                            end;
+                    'tan': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(tan(aux1));
+                           OperatorsStack.pop();
+                           end;
                     'exp': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
@@ -388,35 +430,40 @@ begin
                            OperatorsStack.pop();
                            end;
                end;
-               aux1:=OperandStack.top();
-               OperandStack.pop();
+               aux1:=preaux;//OperandStack.top();
+               //OperandStack.pop();
                aux2:=OperandStack.top();
                OperandStack.pop();
                OperandStack.push(aux2/aux1);
                end;
           'ln': begin
-                aux1:=OperandStack.top();
-                OperandStack.pop();
+                aux1:=preaux;//aux1:=OperandStack.top();
+                //OperandStack.pop();
                 OperandStack.push(ln(aux1));
                 end;
           'sin': begin
-                 aux1:=OperandStack.top();
-                 OperandStack.pop();
+                 aux1:=preaux;//aux1:=OperandStack.top();
+                 //OperandStack.pop();
                  OperandStack.push(sin(aux1));
                  end;
           'cos': begin
-                 aux1:=OperandStack.top();
-                 OperandStack.pop();
+                 aux1:=preaux;//aux1:=OperandStack.top();
+                 //OperandStack.pop();
                  OperandStack.push(cos(aux1));
                  end;
+          'tan': begin
+                 aux1:=preaux;//OperandStack.top();
+                 //OperandStack.pop();
+                 OperandStack.push(tan(aux1));
+                 end;
           'exp': begin
-                 aux1:=OperandStack.top();
-                 OperandStack.pop();
+                 aux1:=preaux;//OperandStack.top();
+                 //OperandStack.pop();
                  OperandStack.push(exp(aux1));
                  end;
           '^': begin
-                 aux1:=OperandStack.top();
-                 OperandStack.pop();
+                 aux1:=preaux;//OperandStack.top();
+                 //OperandStack.pop();
                  aux2:=OperandStack.top();
                  OperandStack.pop();
                  OperandStack.push((power(aux2,aux1)));

@@ -47,7 +47,7 @@ end;
 procedure TForm1.GoClick(Sender: TObject);
 begin
   SParser.Expression:=EditOperacion.Text;
-  Memo1.Lines.Add(FloatToStr(SParser.Evaluate2()));
+  Memo1.Lines.Add(FloatToStr(SParser.Evaluate()));
 end;
 end.
 

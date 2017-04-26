@@ -12,7 +12,6 @@ type
   Public
     Expression: String;
     function Evaluate():Double;
-
     procedure SetExpression(NewExp:String);
   end;
 
@@ -53,6 +52,7 @@ begin
       end
       else
           OperandStack.push(StrToFloat(sNumber));
+      i:=i-1;
     end;
 
     if Expression[i] = '*' then
@@ -98,6 +98,38 @@ begin
                   OperandStack.push(aux2/aux1);
                   OperatorsStack.pop();
                 end;
+          'ln': begin
+                aux1:=OperandStack.top();
+                OperandStack.pop();
+                OperandStack.push(ln(aux1));
+                OperatorsStack.pop();
+                end;
+          'sin': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(sin(aux1));
+                 OperatorsStack.pop();
+                 end;
+          'cos': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(cos(aux1));
+                 OperatorsStack.pop();
+                 end;
+          'exp': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(exp(aux1));
+                 OperatorsStack.pop();
+                 end;
+          '^': begin
+                  aux1:=OperandStack.top();
+                  OperandStack.pop();
+                  aux2:=OperandStack.top();
+                  OperandStack.pop();
+                  OperandStack.push((power(aux2,aux1)));
+                  OperatorsStack.pop();
+                  end;
       end;
       OperatorsStack.push('+');
     end;
@@ -122,6 +154,38 @@ begin
                   OperandStack.push(aux2/aux1);
                   OperatorsStack.pop();
                 end;
+          'ln': begin
+                aux1:=OperandStack.top();
+                OperandStack.pop();
+                OperandStack.push(ln(aux1));
+                OperatorsStack.pop();
+                end;
+          'sin': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(sin(aux1));
+                 OperatorsStack.pop();
+                 end;
+          'cos': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(cos(aux1));
+                 OperatorsStack.pop();
+                 end;
+          'exp': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(exp(aux1));
+                 OperatorsStack.pop();
+                 end;
+          '^': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 aux2:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push((power(aux2,aux1)));
+                 OperatorsStack.pop();
+                 end;
       end;
       OperatorsStack.push('-');
     end;
@@ -143,7 +207,7 @@ begin
                         OperandStack.pop();
                         OperandStack.push(aux1*aux2);
                         OperatorsStack.pop();
-                        end;
+                    end;
                     '/' : begin
                         aux1:=OperandStack.top();
                         OperandStack.pop();
@@ -151,26 +215,30 @@ begin
                         OperandStack.pop();
                         OperandStack.push(aux2/aux1);
                         OperatorsStack.pop();
-                          end;
+                    end;
                     'ln': begin
                           aux1:=OperandStack.top();
                           OperandStack.pop();
                           OperandStack.push(ln(aux1));
+                          OperatorsStack.pop();
                           end;
                     'sin': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push(sin(aux1));
+                           OperatorsStack.pop();
                            end;
                     'cos': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push(cos(aux1));
+                           OperatorsStack.pop();
                            end;
                     'exp': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push(exp(aux1));
+                           OperatorsStack.pop();
                            end;
                     '^': begin
                            aux1:=OperandStack.top();
@@ -178,6 +246,7 @@ begin
                            aux2:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push((power(aux2,aux1)));
+                           OperatorsStack.pop();
                            end;
                end;
                aux1:=OperandStack.top();
@@ -195,7 +264,7 @@ begin
                         OperandStack.pop();
                         OperandStack.push(aux1*aux2);
                         OperatorsStack.pop();
-                        end;
+                    end;
                     '/' : begin
                         aux1:=OperandStack.top();
                         OperandStack.pop();
@@ -208,21 +277,25 @@ begin
                           aux1:=OperandStack.top();
                           OperandStack.pop();
                           OperandStack.push(ln(aux1));
+                          OperatorsStack.pop();
                           end;
                     'sin': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push(sin(aux1));
+                           OperatorsStack.pop();
                            end;
                     'cos': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push(cos(aux1));
+                           OperatorsStack.pop();
                            end;
                     'exp': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push(exp(aux1));
+                           OperatorsStack.pop();
                            end;
                     '^': begin
                            aux1:=OperandStack.top();
@@ -230,6 +303,7 @@ begin
                            aux2:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push((power(aux2,aux1)));
+                           OperatorsStack.pop();
                            end;
                end;
                aux1:=OperandStack.top();
@@ -244,21 +318,25 @@ begin
                           aux1:=OperandStack.top();
                           OperandStack.pop();
                           OperandStack.push(ln(aux1));
+                          OperatorsStack.pop();
                           end;
                     'sin': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push(sin(aux1));
+                           OperatorsStack.pop();
                            end;
                     'cos': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push(cos(aux1));
+                           OperatorsStack.pop();
                            end;
                     'exp': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push(exp(aux1));
+                           OperatorsStack.pop();
                            end;
                     '^': begin
                            aux1:=OperandStack.top();
@@ -266,6 +344,7 @@ begin
                            aux2:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push((power(aux2,aux1)));
+                           OperatorsStack.pop();
                            end;
                end;
                aux1:=OperandStack.top();
@@ -280,21 +359,25 @@ begin
                           aux1:=OperandStack.top();
                           OperandStack.pop();
                           OperandStack.push(ln(aux1));
+                          OperatorsStack.pop();
                           end;
                     'sin': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push(sin(aux1));
+                           OperatorsStack.pop();
                            end;
                     'cos': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push(cos(aux1));
+                           OperatorsStack.pop();
                            end;
                     'exp': begin
                            aux1:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push(exp(aux1));
+                           OperatorsStack.pop();
                            end;
                     '^': begin
                            aux1:=OperandStack.top();
@@ -302,6 +385,7 @@ begin
                            aux2:=OperandStack.top();
                            OperandStack.pop();
                            OperandStack.push((power(aux2,aux1)));
+                           OperatorsStack.pop();
                            end;
                end;
                aux1:=OperandStack.top();

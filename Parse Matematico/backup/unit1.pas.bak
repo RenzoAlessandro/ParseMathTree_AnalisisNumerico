@@ -20,9 +20,7 @@ type
     ParceMatematico: TLabel;
     Memo1: TMemo;
     procedure FormCreate(Sender: TObject);
-    procedure EditOperacionChange(Sender: TObject);
     procedure GoClick(Sender: TObject);
-    procedure Memo1Change(Sender: TObject);
   private
     { private declarations }
   public
@@ -40,28 +38,16 @@ implementation
 
 { TForm1 }
 
-procedure TForm1.EditOperacionChange(Sender: TObject);
-begin
-
-end;
-
 procedure TForm1.FormCreate(Sender: TObject);
 begin
      Arbol:= TPTree.Create();
      SParser:= TParseR.Create;
 end;
 
-
 procedure TForm1.GoClick(Sender: TObject);
 begin
   SParser.Expression:=EditOperacion.Text;
-  Memo1.Lines.Add(FloatToStr(SParser.Evaluate()));
+  Memo1.Lines.Add(FloatToStr(SParser.Evaluate2()));
 end;
-
-procedure TForm1.Memo1Change(Sender: TObject);
-begin
-
-end;
-
 end.
 

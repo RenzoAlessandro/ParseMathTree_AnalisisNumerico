@@ -5,16 +5,14 @@ unit ParseR;
 interface
 
 uses
-  Classes, SysUtils, gstack, math;
-{Classes, SysUtils, FileUtil, RTTICtrls, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ComCtrls,gstack,math;}
-
+  Classes, SysUtils, gstack, math, Dialogs;
 type
   TParseR = Class
   Private
   Public
     Expression: String;
     function Evaluate():Double;
+    function Evaluate2():Double;
     procedure SetExpression(NewExp:String);
   end;
 
@@ -24,7 +22,7 @@ type
   TCharStack = specialize TStack<String>;
   TIntegerStack = specialize TStack<Extended>;
 const
-  NUM = ['0'..'9'];
+  NUM = ['0'..'9',','];
 var
   OperatorsStack: TCharStack;
   OperandStack: TIntegerStack;
@@ -37,8 +35,7 @@ begin
   OperandStack:= TIntegerStack.Create;
   Expression:='('+Expression+')';
   i:=1;
-  while i <= Length(Expression) do
-  begin
+  while i <= Length(Expression) do begin
     if Expression[i] = '(' then
        OperatorsStack.push('(');
     if Expression[i] in NUM then
@@ -57,15 +54,28 @@ begin
 
     if Expression[i] = '*' then
        OperatorsStack.push('*');
-    if Expression[i] = 'l' then
+    if Expression[i] = 'l' then begin
        OperatorsStack.push('ln');
-    if Expression[i] = 's' then
+       i:=i+1;
+    end;
+    if Expression[i] = 's' then begin
        OperatorsStack.push('sin');
-    if Expression[i] = 'c' then
+       i:=i+2;
+    end;
+    if Expression[i] = 'c' then begin
        OperatorsStack.push('cos');
-    if Expression[i] = 'e' then
+       i:=i+2;
+    end;
+    if Expression[i] = 'e' then begin
        OperatorsStack.push('exp');
+       i:=i+2;
+    end;
     if Expression[i] = '+' then begin
+      if OperatorsStack.IsEmpty() then begin
+         ShowMessage('empty stack');
+         Break;
+      end;
+      ShowMessage('filled stack');
       case OperatorsStack.top() of
           '*' : begin
                   aux1:= OperandStack.top();
@@ -138,6 +148,295 @@ begin
                OperandStack.push(aux1*aux2);
                end;
           '/': begin
+               aux1:=OperandStack.top();
+               OperandStack.pop();
+               aux2:=OperandStack.top();
+               OperandStack.pop();
+               OperandStack.push(aux2/aux1);
+               end;
+          'ln': begin
+                aux1:=OperandStack.top();
+                OperandStack.pop();
+                OperandStack.push(ln(aux1));
+                end;
+          'sin': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(sin(aux1));
+                 end;
+          'cos': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(cos(aux1));
+                 end;
+          'exp': begin
+                 aux1:=OperandStack.top();
+                 OperandStack.pop();
+                 OperandStack.push(exp(aux1));
+                 end;
+        end;
+      end;
+    OperatorsStack.pop();
+    end;
+    i:=i+1;
+  end;
+  result:= OperandStack.top();
+end;
+
+function TParseR.Evaluate2(): Double;
+type
+  TCharStack = specialize TStack<String>;
+  TIntegerStack = specialize TStack<Extended>;
+const
+  NUM = ['0'..'9',','];
+var
+  OperatorsStack: TCharStack;
+  OperandStack: TIntegerStack;
+  i,numberStart,numberEnd: integer;
+  aux1,aux2: Extended;
+  sNumber: String;
+  AuxOperator: String;
+begin
+  OperatorsStack:= TCharStack.Create;
+  OperandStack:= TIntegerStack.Create;
+  Expression:='('+Expression+')';
+  i:=1;
+  while i <= Length(Expression) do begin
+    if Expression[i] = '(' then
+       OperatorsStack.push('(');
+    if Expression[i] in NUM then begin
+      numberStart:=i;
+      sNumber:='';
+      while Expression[i] in NUM do
+          i:=i+1;
+      numberEnd:=i;
+      sNumber:= Expression.Substring(numberStart-1,numberEnd-numberStart);
+      if(not OperatorsStack.IsEmpty()) and (String(OperatorsStack.Top()) = '-') then begin
+          OperandStack.push(-StrToFloat(sNumber));
+          OperatorsStack.Pop();
+          OperatorsStack.Push('+');
+      end
+      else
+          OperandStack.push(StrToFloat(sNumber));
+    end;
+
+    if Expression[i] = '*' then
+       OperatorsStack.push('*');
+    if Expression[i] = 'l' then begin
+       OperatorsStack.push('ln');
+       i:=i+1;
+    end;
+    if Expression[i] = 's' then begin
+       OperatorsStack.push('sin');
+       i:=i+2;
+    end;
+    if Expression[i] = 'c' then begin
+       OperatorsStack.push('cos');
+       i:=i+2;
+    end;
+    if Expression[i] = 'e' then begin
+       OperatorsStack.push('exp');
+       i:=i+2;
+    end;
+    if Expression[i] = '+' then begin
+      if OperatorsStack.IsEmpty() then begin
+         Break;
+      end;
+      case OperatorsStack.top() of
+          '*' : begin
+                  aux1:= OperandStack.top();
+                  OperandStack.pop();
+                  aux2:= OperandStack.top();
+                  OperandStack.pop();
+                  OperandStack.push(aux1*aux2);
+                  OperatorsStack.pop();
+                end;
+          '/' : begin
+                  aux1:=OperandStack.top();
+                  OperandStack.pop();
+                  aux2:=OperandStack.top();
+                  OperandStack.pop();
+                  OperandStack.push(aux2/aux1);
+                  OperatorsStack.pop();
+                end;
+      end;
+      OperatorsStack.push('+');
+    end;
+    if Expression[i] = '-' then begin
+      if OperatorsStack.IsEmpty() then begin
+         Break;
+      end;
+      case OperatorsStack.top() of
+          '*' : begin
+                  aux1:= OperandStack.top();
+                  OperandStack.pop();
+                  aux2:= OperandStack.top();
+                  OperandStack.pop();
+                  OperandStack.push(aux1*aux2);
+                  OperatorsStack.pop();
+                end;
+          '/' : begin
+                  aux1:=OperandStack.top();
+                  OperandStack.pop();
+                  aux2:=OperandStack.top();
+                  OperandStack.pop();
+                  OperandStack.push(aux2/aux1);
+                  OperatorsStack.pop();
+                end;
+      end;
+      OperatorsStack.push('-');
+    end;
+    if Expression[i] = '/' then
+      OperatorsStack.push('/');
+    if Expression[i] = ')' then
+    begin
+      while OperatorsStack.top() <> '(' do
+      begin
+        AuxOperator := OperatorsStack.top();
+        OperatorsStack.pop();
+        case AuxOperator of
+          '+': begin
+               case OperatorsStack.top() of
+                    '*' : begin
+                        aux1:= OperandStack.top();
+                        OperandStack.pop();
+                        aux2:= OperandStack.top();
+                        OperandStack.pop();
+                        OperandStack.push(aux1*aux2);
+                        OperatorsStack.pop();
+                    end;
+                    '/' : begin
+                        aux1:=OperandStack.top();
+                        OperandStack.pop();
+                        aux2:=OperandStack.top();
+                        OperandStack.pop();
+                        OperandStack.push(aux2/aux1);
+                        OperatorsStack.pop();
+                    end;
+                    'ln': begin
+                          aux1:=OperandStack.top();
+                          OperandStack.pop();
+                          OperandStack.push(ln(aux1));
+                          end;
+                    'sin': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(sin(aux1));
+                           end;
+                    'cos': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(cos(aux1));
+                           end;
+                    'exp': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(exp(aux1));
+                           end;
+               end;
+               aux1:=OperandStack.top();
+               OperandStack.pop();
+               aux2:=OperandStack.top();
+               OperandStack.pop();
+               OperandStack.push(aux1+aux2);
+               end;
+          '-': begin
+               case OperatorsStack.top() of
+                    '*' : begin
+                        aux1:= OperandStack.top();
+                        OperandStack.pop();
+                        aux2:= OperandStack.top();
+                        OperandStack.pop();
+                        OperandStack.push(aux1*aux2);
+                        OperatorsStack.pop();
+                    end;
+                    '/' : begin
+                        aux1:=OperandStack.top();
+                        OperandStack.pop();
+                        aux2:=OperandStack.top();
+                        OperandStack.pop();
+                        OperandStack.push(aux2/aux1);
+                        OperatorsStack.pop();
+                    end;
+                    'ln': begin
+                          aux1:=OperandStack.top();
+                          OperandStack.pop();
+                          OperandStack.push(ln(aux1));
+                          end;
+                    'sin': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(sin(aux1));
+                           end;
+                    'cos': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(cos(aux1));
+                           end;
+                    'exp': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(exp(aux1));
+                           end;
+               end;
+               aux1:=OperandStack.top();
+               OperandStack.pop();
+               aux2:=OperandStack.top();
+               OperandStack.pop();
+               OperandStack.push(aux2-aux1);
+               end;
+          '*': begin
+               case OperatorsStack.top() of
+                    'ln': begin
+                          aux1:=OperandStack.top();
+                          OperandStack.pop();
+                          OperandStack.push(ln(aux1));
+                          end;
+                    'sin': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(sin(aux1));
+                           end;
+                    'cos': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(cos(aux1));
+                           end;
+                    'exp': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(exp(aux1));
+                           end;
+               end;
+               aux1:=OperandStack.top();
+               OperandStack.pop();
+               aux2:=OperandStack.top();
+               OperandStack.pop();
+               OperandStack.push(aux1*aux2);
+               end;
+          '/': begin
+               case OperatorsStack.top() of
+                    'ln': begin
+                          aux1:=OperandStack.top();
+                          OperandStack.pop();
+                          OperandStack.push(ln(aux1));
+                          end;
+                    'sin': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(sin(aux1));
+                           end;
+                    'cos': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(cos(aux1));
+                           end;
+                    'exp': begin
+                           aux1:=OperandStack.top();
+                           OperandStack.pop();
+                           OperandStack.push(exp(aux1));
+                           end;
+               end;
                aux1:=OperandStack.top();
                OperandStack.pop();
                aux2:=OperandStack.top();

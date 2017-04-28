@@ -22,7 +22,7 @@ type
   TCharStack = specialize TStack<String>;
   TIntegerStack = specialize TStack<Extended>;
 const
-  NUM = ['0'..'9','.'];
+  NUM = ['0'..'9','.',','];
 var
   OperatorsStack: TCharStack;
   OperandStack: TIntegerStack;
@@ -37,13 +37,12 @@ begin
   Expression:='('+Expression+')';
   i:=1;
   while i <= Length(Expression) do begin
-    if Expression[i] = '(' then
-       OperatorsStack.push('(');
     if Expression[i] in NUM then begin
       numberStart:=i;
       sNumber:='';
-      while Expression[i] in NUM do
+      while Expression[i] in NUM do begin
           i:=i+1;
+      end;
       numberEnd:=i;
       sNumber:= Expression.Substring(numberStart-1,numberEnd-numberStart);
       if(not OperatorsStack.IsEmpty()) and (String(OperatorsStack.Top()) = '-') then begin
@@ -51,11 +50,13 @@ begin
           OperatorsStack.Pop();
           OperatorsStack.Push('+');
       end
-      else
+      else begin
           OperandStack.push(StrToFloat(sNumber));
-      i:=i-1;
+      end;
+      //i:=i-1;
     end;
-
+    if Expression[i] = '(' then
+       OperatorsStack.push('(');
     if Expression[i] = '*' then
        OperatorsStack.push('*');
     if Expression[i] = 'l' then begin
@@ -273,11 +274,15 @@ begin
                            OperatorsStack.pop();
                            end;
                end;
-               aux1:=preaux;//OperandStack.top();
-               //OperandStack.pop();
-               aux2:=OperandStack.top();
-               OperandStack.pop();
-               OperandStack.push(aux1+aux2);
+               aux1:=preaux;
+               if not (String(OperatorsStack.Top()) = '(') then begin
+                  aux2:=OperandStack.top();
+                  OperandStack.pop();
+                  OperandStack.push(aux2+aux1);
+               end
+               else begin
+                    OperandStack.Push(aux1);
+               end;
                end;
           '-': begin
                case OperatorsStack.top() of
@@ -336,11 +341,16 @@ begin
                            OperatorsStack.pop();
                            end;
                end;
-               aux1:=preaux;//OperandStack.top();
-               //OperandStack.pop();
-               aux2:=OperandStack.top();
-               OperandStack.pop();
-               OperandStack.push(aux2-aux1);
+               aux1:=preaux;
+               if not (String(OperatorsStack.Top()) = '(') then begin
+                  aux2:=OperandStack.top();
+                  OperandStack.pop();
+                  OperandStack.push(aux2-aux1);
+               end
+               else begin
+                    OperandStack.Push(-aux1);
+               end;
+
                end;
           '*': begin
                case OperatorsStack.top() of
@@ -437,28 +447,28 @@ begin
                OperandStack.push(aux2/aux1);
                end;
           'ln': begin
-                aux1:=OperandStack.top();
-                OperandStack.pop();
+                aux1:=preaux;//aux1:=OperandStack.top();
+                //OperandStack.pop();
                 OperandStack.push(ln(aux1));
                 end;
           'sin': begin
-                 aux1:=OperandStack.top();
-                 OperandStack.pop();
+                 aux1:=preaux;//aux1:=OperandStack.top();
+                 //OperandStack.pop();
                  OperandStack.push(sin(aux1));
                  end;
           'cos': begin
-                 aux1:=OperandStack.top();
-                 OperandStack.pop();
+                 aux1:=preaux;//aux1:=OperandStack.top();
+                 //OperandStack.pop();
                  OperandStack.push(cos(aux1));
                  end;
           'tan': begin
-                 aux1:=OperandStack.top();
-                 OperandStack.pop();
+                 aux1:=preaux;//OperandStack.top();
+                 //OperandStack.pop();
                  OperandStack.push(tan(aux1));
                  end;
           'exp': begin
-                 aux1:=OperandStack.top();
-                 OperandStack.pop();
+                 aux1:=preaux;//OperandStack.top();
+                 //OperandStack.pop();
                  OperandStack.push(exp(aux1));
                  end;
           '^': begin
